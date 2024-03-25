@@ -10,6 +10,15 @@ import torchvision.models.resnet as resnet
 import torchvision.transforms as T
 import sacred
 
+## Code to fix the data module errors
+import sys
+
+# Set the root folder to the current working directory
+root_folder = os.getcwd()
+
+# Add the root folder to the Python path
+sys.path.append(root_folder)
+
 from datetime import datetime
 from pytorch_lightning import Trainer
 from pytorch_lightning.loggers import NeptuneLogger
