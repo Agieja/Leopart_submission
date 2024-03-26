@@ -4,6 +4,15 @@ import torch
 import pandas as pd
 import sacred
 
+## Code to fix the data module errors
+import sys
+import psutil
+# Set the root folder to the current working directory
+root_folder = os.getcwd()
+
+# Add the root folder to the Python path
+sys.path.append(root_folder)
+
 from datetime import datetime
 from pytorch_lightning import Trainer, seed_everything
 from pytorch_lightning.callbacks import ModelCheckpoint
@@ -21,6 +30,16 @@ from src.evaluate_attn_maps import EvaluateAttnMaps
 
 ex = sacred.experiment.Experiment()
 api_key = "eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vdWkubmVwdHVuZS5haSIsImFwaV91cmwiOiJodHRwczovL3VpLm5lcHR1bmUuYWkiLCJhcGlfa2V5IjoiMTI3NWYzYmEtYWE4NC00NzRhLWJlZGEtNTA5ZTE4NTgxMzg0In0="
+
+# # Check if cuda is available only first time
+
+# print(torch.cuda.is_available())
+
+# checkpoint = torch.load('checkpoints/leopart_vits16.ckpt')
+# print(checkpoint.keys())
+
+# Running this code runs the finetuning with the proper config file
+#C:/Users/Ahmed/anaconda3/envs/deeplearn/python.exe "g:/My Drive/TU Delft/1. Courses/CS4240 Deep learning/Project/leopart/leopart/experiments/finetune_with_leopart.py" --config_path "G:/My Drive/TU Delft/1. Courses/CS4240 Deep learning/Project/leopart/leopart/experiments/configs/train_voc_config.yml"
 
 
 @click.command()

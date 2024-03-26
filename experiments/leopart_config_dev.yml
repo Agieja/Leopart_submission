@@ -5,7 +5,7 @@ tags: "leopart"
 
 data:
   data_dir: "<your imagenet path>"
-  dataset_name: "imagenet100k" # choose between [imagenet100k, coco, voc]
+  dataset_name: "voc" # choose between [imagenet100k, coco, voc]
   size_crops: [224, 96]
   jitter_strength: 1.0
   blur_strength: 1.0
@@ -15,7 +15,7 @@ data:
   nmb_samples: [2, 4]
   size_crops_val: 448 # Crops size for validation and seg maps viz
   num_classes_val: 21
-  voc_data_path: "<your voc path>"
+  voc_data_path: "data/VOCdevkit/VOC_data"
 
 train:
   roi_align_kernel_size: 7
@@ -49,6 +49,6 @@ train:
   val_downsample_masks: True
   val_iters: 5
   save_checkpoint_every_n_epochs: 5
-  checkpoint_dir: "<your ckpt path>"
-  checkpoint: null
+  checkpoint_dir: "checkpoints/"
+  checkpoint: "checkpoints/leopart_vits16_pvoc_lin_head.ckpt"
   only_load_weights: False

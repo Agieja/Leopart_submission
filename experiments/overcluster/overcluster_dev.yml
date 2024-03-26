@@ -16,7 +16,7 @@ val:
   num_seeds: 5
   K: 500
   pca_dim: 50
-  ckpt_path: "checkpoints/leopart_vits16_pvoc_lin_head.ckpt"
+  ckpt_path: "checkpoints/leopart_vitb8_pvoc_fcn_head.ckpt"
   ckpt_dir: "checkpoints/"
   patch_size: 16
   fast_dev_run: True
