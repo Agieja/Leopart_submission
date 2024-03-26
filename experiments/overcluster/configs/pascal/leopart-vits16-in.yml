@@ -10,13 +10,13 @@ data:
 
 val:
   method: 'ours'
-  arch: 'vit'
+  arch: 'vit-small'
   batch_size: 60
   restart: False
   num_seeds: 5
   K: 500
   pca_dim: 50
-  ckpt_path: "checkpoints/leopart-vits16.ckpt"
+  ckpt_path: "checkpoints/leopart_vits16.ckpt"
   ckpt_dir: "checkpoints/"
   patch_size: 16
   fast_dev_run: 30
