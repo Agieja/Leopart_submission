@@ -4,7 +4,7 @@ gpus: 1
 tags: "finetune_linear"
 
 data:
-  data_dir: "data/VOCdevkit/VOC_data/"
+  data_dir: "data/VOCdevkit/VOC_data"
   dataset_name: "voc"
   size_crops: 448
 

@@ -50,5 +50,5 @@ train:
   val_iters: 5
   save_checkpoint_every_n_epochs: 5
   checkpoint_dir: "checkpoints/"
-  checkpoint: "checkpoints/leopart_vits16_pvoc_lin_head.ckpt"
+  checkpoint: null
   only_load_weights: False
