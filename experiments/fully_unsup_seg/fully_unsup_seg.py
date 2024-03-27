@@ -1,3 +1,6 @@
+## Run the following command to run the experiment:
+# python experiments/fully_unsup_seg/fully_unsup_seg.py --ckpt_path "G:\My Drive\TU Delft\1. Courses\CS4240 Deep learning\Project\leopart\leopart\checkpoints\leopart_vits16.ckpt"  --experiment_name vits16 --best_k 149 --best_mt 2 --best_wt 0.09 --data_dir "G:\My Drive\TU Delft\1. Courses\CS4240 Deep learning\Project\leopart\leopart\data\VOCdevkit\VOC_data" --batch_size 4
+
 import click
 import optuna
 import joblib
@@ -7,6 +10,15 @@ import torch.nn.functional as F
 import torchvision
 import numpy as np
 import os
+
+## Code to fix the data module errors
+import sys
+
+# Set the root folder to the current working directory
+root_folder = os.getcwd()
+
+# Add the root folder to the Python path
+sys.path.append(root_folder)
 
 from collections import defaultdict
 from torchvision.transforms import ToTensor, Compose, Resize, Normalize
@@ -18,6 +30,8 @@ from infomap import Infomap
 from data.VOCdevkit.vocdata import VOCDataModule
 from experiments.utils import PredsmIoU, eval_jac, get_backbone_weights, store_and_compute_features, cluster
 from src.vit import vit_small, vit_base
+
+
 
 
 def get_cluster_precs(cluster: torch.Tensor, mask: torch.Tensor, k: int) -> List[float]:
