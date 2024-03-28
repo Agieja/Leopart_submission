@@ -1,5 +1,8 @@
 ## Run the following command to run the experiment:
-# python experiments/fully_unsup_seg/fully_unsup_seg.py --ckpt_path "G:\My Drive\TU Delft\1. Courses\CS4240 Deep learning\Project\leopart\leopart\checkpoints\leopart_vits16.ckpt"  --experiment_name vits16 --best_k 149 --best_mt 2 --best_wt 0.09 --data_dir "G:\My Drive\TU Delft\1. Courses\CS4240 Deep learning\Project\leopart\leopart\data\VOCdevkit\VOC_data" --batch_size 4
+#
+#
+#
+# python experiments/fully_unsup_seg/fully_unsup_seg.py --ckpt_path "G:\My Drive\TU Delft\1. Courses\CS4240 Deep learning\Project\leopart\leopart\checkpoints\leopart_vits16.ckpt"  --experiment_name vits16 --best_k 149 --best_mt 2 --best_wt 0.09 --data_dir "G:\My Drive\TU Delft\1. Courses\CS4240 Deep learning\Project\leopart\leopart\data\VOCdevkit\VOC_data" --batch_size 4 --save_folder "G:\My Drive\TU Delft\1. Courses\CS4240 Deep learning\Project\leopart\leopart\masks"
 
 import click
 import optuna
