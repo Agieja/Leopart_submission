@@ -7,4 +7,5 @@ data/
 checkpoints/
 images/
 embeddings/
+masks/
 ```
