@@ -1,9 +1,15 @@
 ## Run the following command to run the experiment:
 #
+# NOTE: The first run will take a long time as it computes embeddings and clusters. Subsequent runs will be faster as it caches the embeddings and clusters from the save_folder directory.
+# The first run will also error out as it tries to load embeddings from disk. The terminal gives an dimension mismatch error. This is expected from our side but we did not expect.
+# The second run will work as expected where it will load the embeddings from disk and start clustering. After clustering, it will start community detection. After community detection, it will evaluate the performance and give the miou score.
 #
-#
+# SMALL ViTs16 architecture
 # python experiments/fully_unsup_seg/fully_unsup_seg.py --ckpt_path "G:\My Drive\TU Delft\1. Courses\CS4240 Deep learning\Project\leopart\leopart\checkpoints\leopart_vits16.ckpt"  --experiment_name vits16 --best_k 149 --best_mt 2 --best_wt 0.09 --data_dir "G:\My Drive\TU Delft\1. Courses\CS4240 Deep learning\Project\leopart\leopart\data\VOCdevkit\VOC_data" --batch_size 4 --save_folder "G:\My Drive\TU Delft\1. Courses\CS4240 Deep learning\Project\leopart\leopart\masks"
-
+#
+# BIG ViTb8 architecture
+# python experiments/fully_unsup_seg/fully_unsup_seg.py --ckpt_path "G:\My Drive\TU Delft\1. Courses\CS4240 Deep learning\Project\leopart\leopart\checkpoints\leopart_vitb8.ckpt"  --experiment_name vitb8 --best_k 109 --best_mt 0.4 --best_wt 0.07 --patch_size 8 --arch vit-base --data_dir "G:\My Drive\TU Delft\1. Courses\CS4240 Deep learning\Project\leopart\leopart\data\VOCdevkit\VOC_data" --batch_size 4 --save_folder "G:\My Drive\TU Delft\1. Courses\CS4240 Deep learning\Project\leopart\leopart\masks"
+ 
 import click
 import optuna
 import joblib
