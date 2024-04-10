@@ -5,7 +5,7 @@
 # The second run will work as expected where it will load the embeddings from disk and start clustering. After clustering, it will start community detection. After community detection, it will evaluate the performance and give the miou score.
 #
 # SMALL ViTs16 architecture
-# python experiments/fully_unsup_seg/fully_unsup_seg.py --ckpt_path "G:\My Drive\TU Delft\1. Courses\CS4240 Deep learning\Project\leopart\leopart\checkpoints\leopart_vits16.ckpt"  --experiment_name vits16 --best_k 149 --best_mt 2 --best_wt 0.09 --data_dir "G:\My Drive\TU Delft\1. Courses\CS4240 Deep learning\Project\leopart\leopart\data\VOCdevkit\VOC_data" --batch_size 4 --save_folder "G:\My Drive\TU Delft\1. Courses\CS4240 Deep learning\Project\leopart\leopart\masks"
+# python experiments/fully_unsup_seg/fully_unsup_seg_le.py --ckpt_path "G:\My Drive\TU Delft\1. Courses\CS4240 Deep learning\Project\leopart\leopart\checkpoints\leopart_vits16.ckpt"  --experiment_name vits16 --best_k 149 --best_mt 2 --best_wt 0.09 --data_dir "G:\My Drive\TU Delft\1. Courses\CS4240 Deep learning\Project\leopart\leopart\data\VOCdevkit\VOC_data" --batch_size 4 --save_folder "G:\My Drive\TU Delft\1. Courses\CS4240 Deep learning\Project\leopart\leopart\masks"
 #
 # BIG ViTb8 architecture
 # python experiments/fully_unsup_seg/fully_unsup_seg.py --ckpt_path "G:\My Drive\TU Delft\1. Courses\CS4240 Deep learning\Project\leopart\leopart\checkpoints\leopart_vitb8.ckpt"  --experiment_name vitb8 --best_k 109 --best_mt 0.4 --best_wt 0.07 --patch_size 8 --arch vit-base --data_dir "G:\My Drive\TU Delft\1. Courses\CS4240 Deep learning\Project\leopart\leopart\data\VOCdevkit\VOC_data" --batch_size 4 --save_folder "G:\My Drive\TU Delft\1. Courses\CS4240 Deep learning\Project\leopart\leopart\masks"
@@ -292,98 +292,98 @@ def start_unsup_seg(patch_size: int, arch: str, ckpt_path: str, experiment_name:
         store_and_compute_features(data_module, pca_dim, model, device, spatial_res, experiment_folder,
                                    gt_save_folder=save_folder, save_attn=True)
 
-    # Cluster features to k_fg_extraction for cluster-based foreground extraction (CBFE)
-    root_cluster_folder = os.path.join(experiment_folder, "clusters")
-    if not os.path.exists(os.path.join(root_cluster_folder, f"clusters_train_{k_fg_extraction}_{clustering_seed}.pt")):
-        print(f"Clustering with granularity {k_fg_extraction}")
-        print("Loading embeddings from disk")
-        val_emb = torch.load(val_features_path)
-        train_emb = torch.load(train_features_path)
-        cluster_all(torch.cat((train_emb, val_emb), dim=0).reshape(-1, pca_dim),
-                    K=[k_fg_extraction], seed=clustering_seed, spatial_res=spatial_res,
-                    experiment_folder=experiment_folder,
-                    pca_dim=pca_dim, train_len=len(data_module.voc_train), spherical=True)
+    # # Cluster features to k_fg_extraction for cluster-based foreground extraction (CBFE)
+    # root_cluster_folder = os.path.join(experiment_folder, "clusters")
+    # if not os.path.exists(os.path.join(root_cluster_folder, f"clusters_train_{k_fg_extraction}_{clustering_seed}.pt")):
+    #     print(f"Clustering with granularity {k_fg_extraction}")
+    #     print("Loading embeddings from disk")
+    #     val_emb = torch.load(val_features_path)
+    #     train_emb = torch.load(train_features_path)
+    #     cluster_all(torch.cat((train_emb, val_emb), dim=0).reshape(-1, pca_dim),
+    #                 K=[k_fg_extraction], seed=clustering_seed, spatial_res=spatial_res,
+    #                 experiment_folder=experiment_folder,
+    #                 pca_dim=pca_dim, train_len=len(data_module.voc_train), spherical=True)
 
-    # Run CBFE to get fg masks
-    train_fg_path = os.path.join(experiment_folder, f"cluster_saliency_train_{k_fg_extraction}_{clustering_seed}.pt")
-    val_fg_path = os.path.join(experiment_folder, f"cluster_saliency_val_{k_fg_extraction}_{clustering_seed}.pt")
-    if not os.path.exists(train_fg_path):
-        print("#" * 10 + " cluster-based foreground extraction " + "#" * 10)
-        cluster_based_fg_extraction(save_folder, clustering_eval_size, experiment_folder, k_fg_extraction,
-                                    clustering_seed, masks_eval_size=input_size)
-        print("Done")
+    # # Run CBFE to get fg masks
+    # train_fg_path = os.path.join(experiment_folder, f"cluster_saliency_train_{k_fg_extraction}_{clustering_seed}.pt")
+    # val_fg_path = os.path.join(experiment_folder, f"cluster_saliency_val_{k_fg_extraction}_{clustering_seed}.pt")
+    # if not os.path.exists(train_fg_path):
+    #     print("#" * 10 + " cluster-based foreground extraction " + "#" * 10)
+    #     cluster_based_fg_extraction(save_folder, clustering_eval_size, experiment_folder, k_fg_extraction,
+    #                                 clustering_seed, masks_eval_size=input_size)
+    #     print("Done")
 
-    # Cluster foreground only, using CBFE masks
-    if not os.path.exists(
-            os.path.join(root_cluster_folder, f"clusters_train_{k_community}_{clustering_seed}_interembTrue.pt")):
-        print("#" * 10 + "cluster foreground only" + "#" * 10)
-        print("Loading embeddings from disk")
-        val_emb = torch.load(val_features_path)
-        train_emb = torch.load(train_features_path)
-        fg_mask_val, fg_mask_train = torch.load(val_fg_path), torch.load(train_fg_path)
-        cluster_all(torch.cat((train_emb, val_emb)).reshape(-1, pca_dim),
-                    K=[k_community], mask=torch.cat((fg_mask_train, fg_mask_val)), spatial_res=spatial_res,
-                    experiment_folder=experiment_folder, pca_dim=pca_dim, train_len=len(data_module.voc_train),
-                    interpolate_embeddings=True, seed=clustering_seed)
-        if evaluate_cbfe:
-            for i in range(5):
-                cluster_all(torch.cat((train_emb, val_emb)).reshape(-1, pca_dim),
-                            K=[num_objects_pvoc], mask=torch.cat((fg_mask_train, fg_mask_val)), spatial_res=spatial_res,
-                            experiment_folder=experiment_folder, pca_dim=pca_dim, train_len=len(data_module.voc_train),
-                            interpolate_embeddings=True, seed=i)
-        print("Done")
+    # # Cluster foreground only, using CBFE masks
+    # if not os.path.exists(
+    #         os.path.join(root_cluster_folder, f"clusters_train_{k_community}_{clustering_seed}_interembTrue.pt")):
+    #     print("#" * 10 + "cluster foreground only" + "#" * 10)
+    #     print("Loading embeddings from disk")
+    #     val_emb = torch.load(val_features_path)
+    #     train_emb = torch.load(train_features_path)
+    #     fg_mask_val, fg_mask_train = torch.load(val_fg_path), torch.load(train_fg_path)
+    #     cluster_all(torch.cat((train_emb, val_emb)).reshape(-1, pca_dim),
+    #                 K=[k_community], mask=torch.cat((fg_mask_train, fg_mask_val)), spatial_res=spatial_res,
+    #                 experiment_folder=experiment_folder, pca_dim=pca_dim, train_len=len(data_module.voc_train),
+    #                 interpolate_embeddings=True, seed=clustering_seed)
+    #     if evaluate_cbfe:
+    #         for i in range(5):
+    #             cluster_all(torch.cat((train_emb, val_emb)).reshape(-1, pca_dim),
+    #                         K=[num_objects_pvoc], mask=torch.cat((fg_mask_train, fg_mask_val)), spatial_res=spatial_res,
+    #                         experiment_folder=experiment_folder, pca_dim=pca_dim, train_len=len(data_module.voc_train),
+    #                         interpolate_embeddings=True, seed=i)
+    #     print("Done")
 
-    # Evaluate fg clustering with k_gt = k_clus to get CBFE semantic segmentation performance.
-    if evaluate_cbfe:
-        print("Evaluate k=20 performance")
-        preds = []
-        for i in range(5):
-            preds.append(evaluate_clustering(num_objects_pvoc, i, "val", experiment_folder, save_folder,
-                                             interpolate_embeddings=True, used_mask=True))
-        res = num_objects_pvoc, [p[0] for p in preds], np.argmax([p[0] for p in preds])
-        print(res)
-        print(np.mean(res[1]))
-        print("Done")
+    # # Evaluate fg clustering with k_gt = k_clus to get CBFE semantic segmentation performance.
+    # if evaluate_cbfe:
+    #     print("Evaluate k=20 performance")
+    #     preds = []
+    #     for i in range(5):
+    #         preds.append(evaluate_clustering(num_objects_pvoc, i, "val", experiment_folder, save_folder,
+    #                                          interpolate_embeddings=True, used_mask=True))
+    #     res = num_objects_pvoc, [p[0] for p in preds], np.argmax([p[0] for p in preds])
+    #     print(res)
+    #     print(np.mean(res[1]))
+    #     print("Done")
 
-    print("#" * 10 + " Start unsupervised overclustering through community detection " + "#" * 10)
-    if compute_upper_bound:
-        print(f"Upper bound for cd with k={k_community + 1} is: ")
-        print(evaluate_clustering(k_community, clustering_seed, "val", experiment_folder, save_folder,
-                                  interpolate_embeddings=True, used_mask=True)[0])
+    # print("#" * 10 + " Start unsupervised overclustering through community detection " + "#" * 10)
+    # if compute_upper_bound:
+    #     print(f"Upper bound for cd with k={k_community + 1} is: ")
+    #     print(evaluate_clustering(k_community, clustering_seed, "val", experiment_folder, save_folder,
+    #                               interpolate_embeddings=True, used_mask=True)[0])
 
-    # Construct undirected graph with clusters as nodes and edges derived from co-occurrence probabilities.
-    print("Constructing graph")
-    train_clusters = torch.load(os.path.join(experiment_folder, "clusters",
-                                             f"clusters_train_{k_community}_{clustering_seed}_interembTrue.pt")).int()
-    val_clusters = torch.load(os.path.join(experiment_folder, "clusters",
-                                           f"clusters_val_{k_community}_{clustering_seed}_interembTrue.pt")).int()
-    num_clusters = len(torch.unique(train_clusters))
-    assert num_clusters == (k_community + 1) and len(torch.unique(val_clusters)) == (k_community + 1)
-    clusters = torch.cat((train_clusters, val_clusters))
-    adj_mat = create_matrix(clusters, num_clusters, [1, 2])
-    edges = [(i, j, min(adj_mat[i, j].item(), adj_mat[j, i].item()))
-             for i in range(num_clusters)
-             for j in range(i, num_clusters)
-             if adj_mat[i, j] >= weight_threshold and adj_mat[j, i] >= weight_threshold]
-    print(
-        f"Adding {len(edges)} edges with {len(set([edge[0] for edge in edges]).union(set([edge[1] for edge in edges])))}"
-        f"nodes out of {num_clusters} clusters")
+    # # Construct undirected graph with clusters as nodes and edges derived from co-occurrence probabilities.
+    # print("Constructing graph")
+    # train_clusters = torch.load(os.path.join(experiment_folder, "clusters",
+    #                                          f"clusters_train_{k_community}_{clustering_seed}_interembTrue.pt")).int()
+    # val_clusters = torch.load(os.path.join(experiment_folder, "clusters",
+    #                                        f"clusters_val_{k_community}_{clustering_seed}_interembTrue.pt")).int()
+    # num_clusters = len(torch.unique(train_clusters))
+    # assert num_clusters == (k_community + 1) and len(torch.unique(val_clusters)) == (k_community + 1)
+    # clusters = torch.cat((train_clusters, val_clusters))
+    # adj_mat = create_matrix(clusters, num_clusters, [1, 2])
+    # edges = [(i, j, min(adj_mat[i, j].item(), adj_mat[j, i].item()))
+    #          for i in range(num_clusters)
+    #          for j in range(i, num_clusters)
+    #          if adj_mat[i, j] >= weight_threshold and adj_mat[j, i] >= weight_threshold]
+    # print(
+    #     f"Adding {len(edges)} edges with {len(set([edge[0] for edge in edges]).union(set([edge[1] for edge in edges])))}"
+    #     f"nodes out of {num_clusters} clusters")
 
-    # Run community detection for num_runs different seeds
-    comms = []
-    for i in range(num_runs):
-        im = Infomap(directed=False, two_level=True, seed=i, markov_time=markov_time, silent=True,
-                     preferred_number_of_modules=num_objects_pvoc)
-        im.add_links(edges)
-        im.run()
-        cluster_id_to_merged = {}
-        for node in im.tree:
-            if node.is_leaf:
-                cluster_id_to_merged[node.node_id] = node.module_id
-        print(f"Found {len(set(cluster_id_to_merged.values()))} comms")
-        comms.append(cluster_id_to_merged)
-    # Dump communities
-    joblib.dump(comms, os.path.join(experiment_folder, "comms.pkl"))
+    # # Run community detection for num_runs different seeds
+    # comms = []
+    # for i in range(num_runs):
+    #     im = Infomap(directed=False, two_level=True, seed=i, markov_time=markov_time, silent=True,
+    #                  preferred_number_of_modules=num_objects_pvoc)
+    #     im.add_links(edges)
+    #     im.run()
+    #     cluster_id_to_merged = {}
+    #     for node in im.tree:
+    #         if node.is_leaf:
+    #             cluster_id_to_merged[node.node_id] = node.module_id
+    #     print(f"Found {len(set(cluster_id_to_merged.values()))} comms")
+    #     comms.append(cluster_id_to_merged)
+    # # Dump communities
+    # joblib.dump(comms, os.path.join(experiment_folder, "comms.pkl"))
 
     # Run evaluation
     all_res = []
