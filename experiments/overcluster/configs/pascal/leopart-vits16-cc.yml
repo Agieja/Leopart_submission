@@ -4,19 +4,19 @@ gpus: 1
 tags: "finetune_linear"
 
 data:
-  data_dir: "<your voc dir>"
+  data_dir: "data/VOCdevkit/VOC_data"
   dataset_name: "voc"
   size_crops: 448
 
 val:
   method: 'ours'
-  arch: 'vit'
+  arch: 'vit-small'
   batch_size: 60
   restart: False
   num_seeds: 5
   K: 500
   pca_dim: 50
-  ckpt_path: "<your ckpt>"
-  ckpt_dir: "<your ckpt dir>"
+  ckpt_path: "checkpoints/leopart_vits16.ckpt"
+  ckpt_dir: "checkpoints/"
   patch_size: 16
   fast_dev_run: 30
