@@ -1,5 +1,5 @@
 ## Run this in local terminal to get the results of the overclustering experiment
-## python experiments/overcluster/sup_overcluster.py --config_path "G:\My Drive\TU Delft\1. Courses\CS4240 Deep learning\Project\leopart\leopart\experiments\overcluster\configs\pascal\leopart-vits16-in.yml"
+## python experiments/overcluster/sup_overcluster.py --config_path "\experiments\overcluster\configs\pascal\leopart-vits16-in.yml"
 
 import click
 import numpy as np
