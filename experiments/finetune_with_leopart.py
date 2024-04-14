@@ -29,7 +29,7 @@ from src.leopart_transforms import LeopartTransforms
 from src.evaluate_attn_maps import EvaluateAttnMaps
 
 ex = sacred.experiment.Experiment()
-api_key = "eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vdWkubmVwdHVuZS5haSIsImFwaV91cmwiOiJodHRwczovL3VpLm5lcHR1bmUuYWkiLCJhcGlfa2V5IjoiMTI3NWYzYmEtYWE4NC00NzRhLWJlZGEtNTA5ZTE4NTgxMzg0In0="
+api_key = "your neptune key"
 
 # # Check if cuda is available only first time
 
