@@ -5,10 +5,10 @@
 # The second run will work as expected where it will load the embeddings from disk and start clustering. After clustering, it will start community detection. After community detection, it will evaluate the performance and give the miou score.
 #
 # SMALL ViTs16 architecture
-# python experiments/fully_unsup_seg/fully_unsup_seg.py --ckpt_path "G:\My Drive\TU Delft\1. Courses\CS4240 Deep learning\Project\leopart\leopart\checkpoints\leopart_vits16.ckpt"  --experiment_name vits16 --best_k 149 --best_mt 2 --best_wt 0.09 --data_dir "G:\My Drive\TU Delft\1. Courses\CS4240 Deep learning\Project\leopart\leopart\data\VOCdevkit\VOC_data" --batch_size 4 --save_folder "G:\My Drive\TU Delft\1. Courses\CS4240 Deep learning\Project\leopart\leopart\masks"
+# python experiments/fully_unsup_seg/fully_unsup_seg.py --ckpt_path "\checkpoints\leopart_vits16.ckpt"  --experiment_name vits16 --best_k 149 --best_mt 2 --best_wt 0.09 --data_dir "\data\VOCdevkit\VOC_data" --batch_size 4 --save_folder "\masks"
 #
 # BIG ViTb8 architecture
-# python experiments/fully_unsup_seg/fully_unsup_seg.py --ckpt_path "G:\My Drive\TU Delft\1. Courses\CS4240 Deep learning\Project\leopart\leopart\checkpoints\leopart_vitb8.ckpt"  --experiment_name vitb8 --best_k 109 --best_mt 0.4 --best_wt 0.07 --patch_size 8 --arch vit-base --data_dir "G:\My Drive\TU Delft\1. Courses\CS4240 Deep learning\Project\leopart\leopart\data\VOCdevkit\VOC_data" --batch_size 4 --save_folder "G:\My Drive\TU Delft\1. Courses\CS4240 Deep learning\Project\leopart\leopart\masks"
+# python experiments/fully_unsup_seg/fully_unsup_seg.py --ckpt_path "\checkpoints\leopart_vitb8.ckpt"  --experiment_name vitb8 --best_k 109 --best_mt 0.4 --best_wt 0.07 --patch_size 8 --arch vit-base --data_dir "\data\VOCdevkit\VOC_data" --batch_size 4 --save_folder "\masks"
  
 import click
 import optuna
